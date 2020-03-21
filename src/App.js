@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import './App.css';
 
@@ -40,13 +40,27 @@ class App extends React.Component {
         <Switch>
           <Route path="/" exact component={HomePage} />
           <Route path="/shop" exact component={ShopPage} />
-          <Route path="/signin" component={SignInAndSignUpPage} />
+          <Route
+            path="/signin"
+            render={() =>
+              this.props.currentUser === 'loading' ? null : this.props
+                  .currentUser ? (
+                <Redirect to="/" />
+              ) : (
+                <SignInAndSignUpPage />
+              )
+            }
+          />
         </Switch>
       </div>
     );
   }
 }
 
-export default connect(null, {
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser
+});
+
+export default connect(mapStateToProps, {
   setCurrentUser
 })(App);
